@@ -1,0 +1,6 @@
+1 -> A
+1 -> B
+
+# Compute the Fibonacci sequence
+A + B -> A
+A + B -> B

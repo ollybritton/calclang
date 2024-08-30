@@ -7,6 +7,8 @@ WIP. Super simple evaluations of the kinds of expression the Casio FX-991EX acce
 1 -> B
 
 # Compute the Fibonacci sequence
-A + B -> A
-A + B -> B
+{
+    A + B -> A
+    A + B -> B
+}
 ```
