@@ -1,0 +1,21 @@
+# Initialise A and B
+1 -> A
+1 -> B
+
+# Used to exit the loop by throwing an error
+1 -> ITER
+10 -> MAXITER
+
+# Compute the Fibonacci sequence
+{
+    P(A)
+    P(B)
+
+    A + B -> A
+    A + B -> B
+
+    ITER+1 -> ITER
+
+    # Will cause MathERROR if ITER > MAXITER, and so will exit.
+    SQRT(MAXITER - ITER)
+}

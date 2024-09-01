@@ -8,7 +8,7 @@ import (
 )
 
 func TestString(t *testing.T) {
-	program := &Program{
+	program := &Section{
 		Statements: []Statement{
 			&VariableAssignment{
 				Tok: token.NewToken(token.IDENT, "a", 0, 0, 0),

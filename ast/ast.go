@@ -51,3 +51,27 @@ func (p *Program) String() string {
 
 	return out.String()
 }
+
+// Repeat statement represents a { ... } statement inside the program.
+type RepeatStatement struct {
+	Tok        token.Token
+	Statements []Statement
+}
+
+func (s *RepeatStatement) statementNode()     {}
+func (s *RepeatStatement) Token() token.Token { return s.Tok }
+func (s *RepeatStatement) String() string {
+	var out bytes.Buffer
+
+	out.WriteString("{\n")
+
+	for _, stmt := range s.Statements {
+		out.WriteString("\t")
+		out.WriteString(stmt.String())
+		out.WriteString("\n")
+	}
+
+	out.WriteString("}")
+
+	return out.String()
+}

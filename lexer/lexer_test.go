@@ -9,7 +9,9 @@ import (
 
 func TestNextToken(t *testing.T) {
 	input := `5 -> A:1.2 -> beans
-tanh(10*pi)`
+tanh(10*pi)
+:::
+? -> ident`
 
 	tests := []token.Token{
 		{Type: token.INT, Literal: "5", Line: 0, StartCol: 0},
@@ -26,7 +28,13 @@ tanh(10*pi)`
 		{Type: token.ASTERISK, Literal: "*", Line: 1},
 		{Type: token.IDENT, Literal: "pi", Line: 1},
 		{Type: token.RPAREN, Literal: ")", Line: 1},
-		{Type: token.EOF, Literal: "", Line: 1},
+		{Type: token.NEWLINE, Literal: "\n", Line: 1},
+		{Type: token.TRIPLE_COLON, Literal: ":::", Line: 2},
+		{Type: token.NEWLINE, Literal: "\n", Line: 2},
+		{Type: token.QUESTION_MARK, Literal: "?", Line: 3},
+		{Type: token.ASSIGN_TO, Literal: "->", Line: 3},
+		{Type: token.IDENT, Literal: "ident", Line: 3},
+		{Type: token.EOF, Literal: "", Line: 3},
 	}
 
 	l := New(input)

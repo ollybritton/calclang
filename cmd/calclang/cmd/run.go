@@ -51,8 +51,6 @@ For now, it will also print the result of the evaluation.`,
 			return
 		}
 
-		fmt.Println(program)
-
 		eval := evaluator.Eval(program, object.NewEnvironment())
 		if eval == nil {
 			return

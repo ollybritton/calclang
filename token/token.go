@@ -39,21 +39,25 @@ const (
 	FLOAT = "FLOAT"
 
 	// Operators
-	ASSIGN_TO = "->"
-	PLUS      = "+"
-	MINUS     = "-"
-	BANG      = "!"
-	ASTERISK  = "*"
-	SLASH     = "/"
+	ASSIGN_TO     = "->"
+	PLUS          = "+"
+	MINUS         = "-"
+	BANG          = "!"
+	ASTERISK      = "*"
+	SLASH         = "/"
+	QUESTION_MARK = "?"
 
 	// Delimeters
-	COMMA   = ","
-	NEWLINE = "\\n"
-	COLON   = ":"
+	COMMA        = ","
+	NEWLINE      = "\\n"
+	COLON        = ":"
+	TRIPLE_COLON = ":::"
 
 	// Brackets/Braces/Parenthesis
 	LPAREN = "("
 	RPAREN = ")"
+	LBRACE = "{"
+	RBRACE = "}"
 )
 
 // NewToken returns a new token from a given Type, Literal and position in the source.

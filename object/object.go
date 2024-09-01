@@ -29,7 +29,8 @@ type BuiltinFunction func(args ...Object) Object
 
 // Builtin represents a builtin inside the program.
 type Builtin struct {
-	Fn BuiltinFunction
+	Fn     BuiltinFunction
+	Strict bool
 }
 
 func (b *Builtin) Type() Type      { return BUILTIN_OBJ }

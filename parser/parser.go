@@ -66,8 +66,8 @@ func (p *Parser) addError(err error) {
 }
 
 // Parse parses the input program into a ast.Program.
-func (p *Parser) Parse() *ast.Program {
-	program := &ast.Program{}
+func (p *Parser) Parse() *ast.Section {
+	program := &ast.Section{}
 
 	for {
 		if p.curTokenIs(token.EOF) {
@@ -103,27 +103,33 @@ func (p *Parser) parseStatement() ast.Statement {
 		return nil
 	}
 
-	expr := p.parseExpression(LOWEST)
-	var stmt ast.Statement
+	switch p.curToken.Type {
+	case token.LBRACE: // Repeat
+		return p.parseRepeatStatement()
+	default:
+		expr := p.parseExpression(LOWEST)
+		var stmt ast.Statement
 
-	if p.peekTokenIs(token.ASSIGN_TO) {
-		p.nextToken() // current token is now ->
-		p.nextToken() // current token is now the start of identifier
+		if p.peekTokenIs(token.ASSIGN_TO) {
+			p.nextToken() // current token is now ->
+			p.nextToken() // current token is now the start of identifier
 
-		ident, _ := p.parseIdentifier().(*ast.Identifier)
-		stmt = &ast.VariableAssignment{
-			Tok:   p.curToken,
-			Name:  ident,
-			Value: expr,
+			ident, _ := p.parseIdentifier().(*ast.Identifier)
+			stmt = &ast.VariableAssignment{
+				Tok:   p.curToken,
+				Name:  ident,
+				Value: expr,
+			}
+		} else {
+			stmt = &ast.ExpressionStatement{
+				Tok:        expr.Token(),
+				Expression: expr,
+			}
 		}
-	} else {
-		stmt = &ast.ExpressionStatement{
-			Tok:        expr.Token(),
-			Expression: expr,
-		}
+
+		return stmt
 	}
 
-	return stmt
 }
 
 // Expression Parsing
@@ -257,4 +263,28 @@ func (p *Parser) parseGroupedExpression() ast.Expression {
 	}
 
 	return exp
+}
+
+func (p *Parser) parseRepeatStatement() ast.Statement {
+	repeat := &ast.RepeatStatement{Tok: p.curToken}
+
+	p.nextToken()
+	for !p.curTokenIs(token.EOF) {
+		if p.curTokenIs(token.NEWLINE) {
+			p.nextToken()
+		}
+
+		if p.curTokenIs(token.RBRACE) {
+			return repeat
+		}
+
+		stmt := p.parseStatement()
+		if stmt != nil {
+			repeat.Statements = append(repeat.Statements, stmt)
+		}
+
+		p.nextToken()
+	}
+
+	return repeat
 }

@@ -1,6 +1,12 @@
+# Initialise A and B
 1 -> A
 1 -> B
 
 # Compute the Fibonacci sequence
-A + B -> A
-A + B -> B
+{
+    P(A)
+    P(B)
+
+    A + B -> A
+    A + B -> B
+}

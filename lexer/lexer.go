@@ -61,6 +61,16 @@ func (l *Lexer) peekChar() byte {
 	return l.input[l.readPosition]
 }
 
+// doublePeekChar returns the next, next char in the input as a byte.
+// If there is no more input at this position, it returns the NUL character.
+func (l *Lexer) doublePeekChar() byte {
+	if l.readPosition+1 >= len(l.input) {
+		return 0
+	}
+
+	return l.input[l.readPosition]
+}
+
 // skipWhitespace will skip over whitespace. If it encounters a newline, it increments
 // the startLine and resets the startPosition.
 func (l *Lexer) skipWhitespace() {
@@ -170,11 +180,30 @@ func (l *Lexer) NextToken() token.Token {
 	case ',':
 		tok = l.newSingleToken(token.COMMA)
 	case ':':
-		tok = l.newSingleToken(token.COLON)
+		if l.peekChar() == ':' && l.doublePeekChar() == ':' {
+			l.readChar()
+			l.readChar()
+
+			tok = token.Token{
+				Type:     token.TRIPLE_COLON,
+				Literal:  ":::",
+				Line:     l.curLine,
+				StartCol: l.curLinePosition - 1,
+				EndCol:   l.curLinePosition,
+			}
+		} else {
+			tok = l.newSingleToken(token.COLON)
+		}
+	case '?':
+		tok = l.newSingleToken(token.QUESTION_MARK)
 	case '(':
 		tok = l.newSingleToken(token.LPAREN)
 	case ')':
 		tok = l.newSingleToken(token.RPAREN)
+	case '{':
+		tok = l.newSingleToken(token.LBRACE)
+	case '}':
+		tok = l.newSingleToken(token.RBRACE)
 	case '-': // - or ->
 		if l.peekChar() == '>' {
 			prev := l.ch

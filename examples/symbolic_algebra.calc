@@ -1,0 +1,27 @@
+# Specification says no "symbolic algebra manipulation"
+
+# number of factors, 2-4
+3 -> F
+
+# factors (x - A)(x - B)...
+1 -> A
+2 -> B
+3 -> C
+0 -> D
+0 -> E
+
+# will print 0 if not calculating for the number of factors
+P( 2 * delta(2, F) )
+P( (-A + -B) * delta(2, F) )
+P( (A * B) * delta(2, F) )
+
+P( 3 * delta(3, F) )
+P( (-A + -B + -C) * delta(3, F) )
+P( (-A * -B + -A * -C + -B * -C) * delta(3, F) )
+P( (-A * -B * -C) * delta(3, F) )
+
+P( 4 * delta(4, F) )
+P( (-A + -B + -C + -D) * delta(4, F) )
+P( (-A * -B + -A * -C + -B * -C + -B * -D + -C * -D) * delta(4, F) )
+P( (-A * -B * -C + -A * -B * -D + -A * -C * -D + -B * -C * -D) * delta(4, F) )
+P( (-A * -B * -C * -D) * delta(4, F) )

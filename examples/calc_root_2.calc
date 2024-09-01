@@ -1,0 +1,12 @@
+1.5 -> GUESS
+
+10 -> MAXITER
+1 -> ITER
+
+:::
+
+GUESS - (GUESS * GUESS - 2) / (2 * GUESS) -> GUESS
+ITER + 1 -> ITER
+
+P(GUESS)
+SQRT(MAXITER - ITER)

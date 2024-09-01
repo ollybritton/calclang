@@ -390,7 +390,7 @@ func checkParserErrors(t *testing.T, p *Parser) bool {
 	return false
 }
 
-func parseProgram(t *testing.T, input string) (*Parser, *ast.Program) {
+func parseProgram(t *testing.T, input string) (*Parser, *ast.Section) {
 	l := lexer.New(input)
 	p := New(l)
 

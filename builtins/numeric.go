@@ -55,7 +55,7 @@ func BuiltinCeil(args ...object.Object) object.Object {
 	case *object.Integer:
 		return val
 	default:
-		return newError("argument to `FLOOR` not supported, got=%s", args[0].Type())
+		return newError("argument to `CEIL` not supported, got=%s", args[0].Type())
 	}
 }
 
@@ -65,12 +65,67 @@ func BuiltinSqrt(args ...object.Object) object.Object {
 		return newError("wrong number of arguments. got=%d, want=1", len(args))
 	}
 
+	var inp float64
+
 	switch val := args[0].(type) {
 	case *object.Float:
-		return &object.Float{Value: math.Sqrt(val.Value)}
+		inp = val.Value
 	case *object.Integer:
-		return &object.Float{Value: math.Sqrt(float64(val.Value))}
+		inp = float64(val.Value)
 	default:
-		return newError("argument to `FLOOR` not supported, got=%s", args[0].Type())
+		return newError("argument to `SQRT` not supported, got=%s", args[0].Type())
 	}
+
+	result := math.Sqrt(float64(inp))
+
+	if math.IsNaN(result) {
+		return newError("MathERROR")
+	}
+
+	return &object.Float{Value: result}
+}
+
+// BuiltinDelta
+func BuiltinKronDelta(args ...object.Object) object.Object {
+	if len(args) == 0 {
+		return newError("wrong number of arguments. got=0, want:>=1")
+	}
+
+	start := args[0]
+	same := true
+
+	switch start := start.(type) {
+	case *object.Float:
+		for _, arg := range args[1:] {
+			other, ok := arg.(*object.Float)
+			if !ok {
+				same = false
+				break
+			}
+
+			if start.Value != other.Value {
+				same = false
+				break
+			}
+		}
+	case *object.Integer:
+		for _, arg := range args[1:] {
+			other, ok := arg.(*object.Integer)
+			if !ok {
+				same = false
+				break
+			}
+
+			if start.Value != other.Value {
+				same = false
+				break
+			}
+		}
+	}
+
+	if same {
+		return &object.Integer{Value: 1}
+	}
+
+	return &object.Integer{Value: 0}
 }

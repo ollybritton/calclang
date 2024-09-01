@@ -1,7 +1,6 @@
 package evaluator
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/ollybritton/calclang/ast"
@@ -12,7 +11,7 @@ import (
 // Eval evaluates a node, and returns its representation as an object.Object.
 func Eval(node ast.Node, env *object.Environment) object.Object {
 	switch node := node.(type) {
-	case *ast.Program:
+	case *ast.Section:
 		return evalProgram(node, env)
 
 	// Statements
@@ -30,10 +29,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		}
 
 		if node.Name.Constant {
-			err := env.SetConstant(node.Name.Value, val)
-			if isError(err) {
-				return err
-			}
+			panic("no support for setting constants")
 		} else {
 			err := env.Set(node.Name.Value, val)
 			if isError(err) {
@@ -86,17 +82,19 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 
 	case *ast.Identifier:
 		return evalIdentifier(node, env)
+
+	case *ast.RepeatStatement:
+		return evalRepeatStatement(node, env)
 	}
 
 	return nil
 }
 
-func evalProgram(program *ast.Program, env *object.Environment) object.Object {
+func evalProgram(program *ast.Section, env *object.Environment) object.Object {
 	var result object.Object
 
 	for _, statement := range program.Statements {
 		result = Eval(statement, env)
-		fmt.Println(result.Inspect()) // TODO: probably not the right place
 
 		switch result := result.(type) {
 		case *object.ReturnValue:
@@ -223,6 +221,19 @@ func evalIdentifier(node *ast.Identifier, env *object.Environment) object.Object
 	}
 
 	return newError("identifier not found: " + node.Value)
+}
+
+func evalRepeatStatement(node *ast.RepeatStatement, env *object.Environment) object.Object {
+	var result object.Object
+
+	for {
+		for _, stmt := range node.Statements {
+			result = Eval(stmt, env)
+			if isError(result) {
+				return result
+			}
+		}
+	}
 }
 
 func applySubroutine(sub object.Object, args []object.Object) object.Object {

@@ -2,6 +2,7 @@ package object
 
 import (
 	"fmt"
+	"math"
 )
 
 // Environment represents the variables and identifiers inside their program, mapped to their actual Object values.
@@ -15,6 +16,10 @@ type Environment struct {
 func NewEnvironment() *Environment {
 	s := make(map[string]Object)
 	c := make(map[string]Object)
+
+	c["pi"] = &Float{Value: math.Pi}
+	c["e"] = &Float{Value: math.E}
+
 	return &Environment{store: s, constants: c, outer: nil}
 }
 
@@ -76,14 +81,4 @@ func (e *Environment) Keys() map[string]bool {
 	}
 
 	return symbols
-}
-
-// SetConstant sets a constant.
-func (e *Environment) SetConstant(name string, value Object) Object {
-	if _, ok := e.constants[name]; ok {
-		return &Error{Message: fmt.Sprintf("cannot assign to constant %s", name)}
-	}
-
-	e.constants[name] = value
-	return value
 }

@@ -174,7 +174,8 @@ func (r *Repl) Parse(input string) {
 		Errors(p.Errors())
 	}
 
-	fmt.Println(repr.String(program, repr.Indent("\t")))
+	fmt.Println(program.String())
+	fmt.Println(au.Faint(repr.String(program, repr.Indent("\t"))))
 	fmt.Println("")
 }
 
@@ -195,7 +196,7 @@ func (r *Repl) Eval(input string) {
 		return
 	}
 
-	// fmt.Println(au.Green(obj.Inspect()))
+	fmt.Println(au.Green(obj.Inspect()))
 	fmt.Println("")
 }
 
