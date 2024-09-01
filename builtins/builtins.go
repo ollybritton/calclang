@@ -15,10 +15,11 @@ func newError(message string, args ...interface{}) *object.Error {
 
 func init() {
 	Builtins["RANDOM_INT"] = &object.Builtin{Fn: BuiltinRandomInt, Strict: true}
-	Builtins["FLOOR"] = &object.Builtin{Fn: BuiltinFloor, Strict: true}
-	Builtins["CEIL"] = &object.Builtin{Fn: BuiltinCeil, Strict: true}
+	Builtins["ROUND"] = &object.Builtin{Fn: BuiltinRound, Strict: true}
 	Builtins["SQRT"] = &object.Builtin{Fn: BuiltinSqrt, Strict: true}
 
 	Builtins["P"] = &object.Builtin{Fn: BuiltinPrint, Strict: false}
 	Builtins["DELTA"] = &object.Builtin{Fn: BuiltinKronDelta, Strict: false}
+	Builtins["FLOOR"] = &object.Builtin{Fn: BuiltinFloor, Strict: false}
+	Builtins["CEIL"] = &object.Builtin{Fn: BuiltinCeil, Strict: false}
 }

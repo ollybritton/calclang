@@ -10,37 +10,37 @@ num -> curr
 1000 -> maxits
 0 -> its
 
-{
-    # if in prime printing mode, print and then set to incrementing mode
-    P(num * delta(mode, 0))
-    mode + (1 - mode) * delta(mode, 0) -> mode
+:::
 
-    # if in incrementing mode, add 1 and then switch to divisibility checking mode
-    # this does nothing if not in incrementing mode
+# if in prime printing mode, print and then set to incrementing mode
+P(num * delta(mode, 0))
+mode + (1 - mode) * delta(mode, 0) -> mode
 
-    num + delta(mode, 1) -> num
-    curr + (num-1 - curr) * delta(mode, 1) -> curr
-    mode + (2 - mode) * delta(mode, 1) -> mode
+# if in incrementing mode, add 1 and then switch to divisibility checking mode
+# this does nothing if not in incrementing mode
 
-    # divisibility checking mode
-    # num holds the number we are currently checking divisibility for
-    # curr holds the candidate divisor
-    
-    # if curr is 1, then this number is prime. So print this prime.
-    mode + (0 - mode) * delta(curr, 1) * delta(mode, 2) -> mode
+num + delta(mode, 1) -> num
+curr + (num-1 - curr) * delta(mode, 1) -> curr
+mode + (2 - mode) * delta(mode, 1) -> mode
 
-    # so now curr is non zero
-    # how can we tell if curr_ | num?
-    # if curr_ | num, then delta(num/curr_ - floor(num/curr_), 0) is 1, otherwise it is 0
+# divisibility checking mode
+# num holds the number we are currently checking divisibility for
+# curr holds the candidate divisor
 
-    divisible + (delta(num/curr - floor(num/curr), 0) - divisible) * delta(mode, 2) -> divisible
+# if curr is 1, then this number is prime. So print this prime.
+mode + (0 - mode) * delta(curr, 1) * delta(mode, 2) -> mode
 
-    # if curr_ | num, then switch back to incrementing mode.
-    mode + (1 - mode) * divisible * delta(mode, 2) -> mode
+# so now curr is non zero
+# how can we tell if curr_ | num?
+# if curr_ | num, then delta(num/curr_ - floor(num/curr_), 0) is 1, otherwise it is 0
 
-    # otherwise, remain in candidate testing mode but decrement current by one
-    curr - 1 * delta(mode, 2) -> curr
+divisible + (delta(num/curr - floor(num/curr), 0) - divisible) * delta(mode, 2) -> divisible
 
-    its+1 -> its
-    sqrt(maxits - its)
-}
+# if curr_ | num, then switch back to incrementing mode.
+mode + (1 - mode) * divisible * delta(mode, 2) -> mode
+
+# otherwise, remain in candidate testing mode but decrement current by one
+curr - 1 * delta(mode, 2) -> curr
+
+its+1 -> its
+sqrt(maxits - its)

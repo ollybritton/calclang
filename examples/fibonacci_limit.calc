@@ -6,16 +6,16 @@
 1 -> ITER
 10 -> MAXITER
 
+:::
+
 # Compute the Fibonacci sequence
-{
-    P(A)
-    P(B)
+P(A)
+P(B)
 
-    A + B -> A
-    A + B -> B
+A + B -> A
+A + B -> B
 
-    ITER+1 -> ITER
+ITER+1 -> ITER
 
-    # Will cause MathERROR if ITER > MAXITER, and so will exit.
-    SQRT(MAXITER - ITER)
-}
+# Will cause MathERROR if ITER > MAXITER, and so will exit.
+SQRT(MAXITER - ITER)

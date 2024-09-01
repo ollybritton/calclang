@@ -3,15 +3,15 @@
 A -> C
 100 -> D
 
-{
-    P(A * delta(B, 0))
-    B + (1 - B) * delta(B, 0) -> B
-    A + delta(B, 1) -> A
-    C + (A-1 - C) * delta(B, 1) -> C
-    B + (2 - B) * delta(B, 1) -> B
-    B + (0 - B) * delta(C, 1) * delta(B, 2) -> B
-    B + (1 - B) * delta(A/C - floor(A/C), 0) * delta(B, 2) -> B
-    C - 1 * delta(B, 2) -> C
+:::
 
-    sqrt(D-A)
-}
+P(A * delta(B, 0))
+B + (1 - B) * delta(B, 0) -> B
+A + delta(B, 1) -> A
+C + (A-1 - C) * delta(B, 1) -> C
+B + (2 - B) * delta(B, 1) -> B
+B + (0 - B) * delta(C, 1) * delta(B, 2) -> B
+B + (1 - B) * delta(A/C - floor(A/C), 0) * delta(B, 2) -> B
+C - 1 * delta(B, 2) -> C
+
+sqrt(D-A)

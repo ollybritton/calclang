@@ -7,6 +7,8 @@ import (
 	"github.com/ollybritton/calclang/object"
 )
 
+const FLOAT_EQUALITY_TOL float64 = 1e-6
+
 // BuiltinRandomInt generates a random integer object between two bounds.
 func BuiltinRandomInt(args ...object.Object) object.Object {
 	if len(args) != 2 {
@@ -40,6 +42,22 @@ func BuiltinFloor(args ...object.Object) object.Object {
 		return val
 	default:
 		return newError("argument to `FLOOR` not supported, got=%s", args[0].Type())
+	}
+}
+
+// BuiltinRound will round a float. It has no effect on integers.
+func BuiltinRound(args ...object.Object) object.Object {
+	if len(args) != 1 {
+		return newError("wrong number of arguments. got=%d, want=1", len(args))
+	}
+
+	switch val := args[0].(type) {
+	case *object.Float:
+		return &object.Integer{Value: int64(math.Round(val.Value))}
+	case *object.Integer:
+		return val
+	default:
+		return newError("argument to `ROUND` not supported, got=%s", args[0].Type())
 	}
 }
 
@@ -91,35 +109,24 @@ func BuiltinKronDelta(args ...object.Object) object.Object {
 		return newError("wrong number of arguments. got=0, want:>=1")
 	}
 
-	start := args[0]
+	floatArgs := []float64{}
+
+	for _, arg := range args {
+		switch arg := arg.(type) {
+		case *object.Float:
+			floatArgs = append(floatArgs, arg.Value)
+		case *object.Integer:
+			floatArgs = append(floatArgs, float64(arg.Value))
+		}
+	}
+
+	start := floatArgs[0]
 	same := true
 
-	switch start := start.(type) {
-	case *object.Float:
-		for _, arg := range args[1:] {
-			other, ok := arg.(*object.Float)
-			if !ok {
-				same = false
-				break
-			}
-
-			if start.Value != other.Value {
-				same = false
-				break
-			}
-		}
-	case *object.Integer:
-		for _, arg := range args[1:] {
-			other, ok := arg.(*object.Integer)
-			if !ok {
-				same = false
-				break
-			}
-
-			if start.Value != other.Value {
-				same = false
-				break
-			}
+	for _, arg := range floatArgs {
+		if math.Abs(arg-start) > FLOAT_EQUALITY_TOL {
+			same = false
+			break
 		}
 	}
 

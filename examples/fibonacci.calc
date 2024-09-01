@@ -2,11 +2,11 @@
 1 -> A
 1 -> B
 
-# Compute the Fibonacci sequence
-{
-    P(A)
-    P(B)
+:::
 
-    A + B -> A
-    A + B -> B
-}
+# Compute the Fibonacci sequence
+P(A)
+P(B)
+
+A + B -> A
+A + B -> B

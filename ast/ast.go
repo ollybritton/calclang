@@ -29,14 +29,16 @@ type Expression interface {
 	expressionNode()
 }
 
-// Program represents a program, which is a collection of statements one after another.
+// Program is a calclang program, which consists of an initialisation section and a loop
+// section.
 type Program struct {
-	Statements []Statement
+	Init *Section
+	Loop *Section
 }
 
 func (p *Program) Token() token.Token {
-	if len(p.Statements) > 0 {
-		return p.Statements[0].Token()
+	if len(p.Init.Statements) > 0 {
+		return p.Init.Statements[0].Token()
 	}
 
 	return token.NewToken(token.ILLEGAL, "", 0, 0, 0)
@@ -45,33 +47,35 @@ func (p *Program) Token() token.Token {
 func (p *Program) String() string {
 	var out bytes.Buffer
 
-	for _, stmt := range p.Statements {
-		out.WriteString(stmt.String())
+	out.WriteString(p.Init.String())
+
+	if p.Loop.String() != "" {
+		out.WriteString("\n:::\n")
+		out.WriteString(p.Loop.String())
 	}
 
 	return out.String()
 }
 
-// Repeat statement represents a { ... } statement inside the program.
-type RepeatStatement struct {
-	Tok        token.Token
+// Section represents a program, which is a collection of statements one after another.
+type Section struct {
 	Statements []Statement
 }
 
-func (s *RepeatStatement) statementNode()     {}
-func (s *RepeatStatement) Token() token.Token { return s.Tok }
-func (s *RepeatStatement) String() string {
-	var out bytes.Buffer
-
-	out.WriteString("{\n")
-
-	for _, stmt := range s.Statements {
-		out.WriteString("\t")
-		out.WriteString(stmt.String())
-		out.WriteString("\n")
+func (p *Section) Token() token.Token {
+	if len(p.Statements) > 0 {
+		return p.Statements[0].Token()
 	}
 
-	out.WriteString("}")
+	return token.NewToken(token.ILLEGAL, "", 0, 0, 0)
+}
+
+func (p *Section) String() string {
+	var out bytes.Buffer
+
+	for _, stmt := range p.Statements {
+		out.WriteString(stmt.String())
+	}
 
 	return out.String()
 }

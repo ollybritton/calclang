@@ -16,7 +16,7 @@ func TestVariableAssignments(t *testing.T) {
 
 	_, program := parseProgram(t, input)
 	fmt.Println(program)
-	assert.Equal(t, 3, len(program.Statements), "program should contain exactly 3 statements. got=%d", len(program.Statements))
+	assert.Equal(t, 3, len(program.Init.Statements), "program should contain exactly 3 statements. got=%d", len(program.Init.Statements))
 
 	tests := []struct {
 		expectedIdent string
@@ -27,7 +27,7 @@ func TestVariableAssignments(t *testing.T) {
 	}
 
 	for i, test := range tests {
-		stmt := program.Statements[i]
+		stmt := program.Init.Statements[i]
 		if !testVariableAssignment(t, stmt, test.expectedIdent) {
 			return
 		}
@@ -38,12 +38,12 @@ func TestIdentifierExpression(t *testing.T) {
 	input := "foobar"
 	_, program := parseProgram(t, input)
 
-	ok := assert.Equal(t, 1, len(program.Statements), "program should contain exactly 1 statement. got=%d", len(program.Statements))
+	ok := assert.Equal(t, 1, len(program.Init.Statements), "program should contain exactly 1 statement. got=%d", len(program.Init.Statements))
 	if !ok {
 		t.FailNow()
 	}
 
-	stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
+	stmt, ok := program.Init.Statements[0].(*ast.ExpressionStatement)
 	assert.True(t, ok, "program.Statements[0] is not ast.ExpressionStatement. got=%T", stmt)
 
 	ident, ok := stmt.Expression.(*ast.Identifier)
@@ -59,14 +59,14 @@ func TestIntegerLiteralExpression(t *testing.T) {
 
 	_, program := parseProgram(t, input)
 
-	ok := assert.Equal(t, 1, len(program.Statements), "program should contain exactly 1 statement. got=%d", len(program.Statements))
+	ok := assert.Equal(t, 1, len(program.Init.Statements), "program should contain exactly 1 statement. got=%d", len(program.Init.Statements))
 	if !ok {
 		t.FailNow()
 	}
 
-	stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
+	stmt, ok := program.Init.Statements[0].(*ast.ExpressionStatement)
 	if !ok {
-		t.Fatalf("program.Statements[0] is not ast.ExpressionStatement. got=%T", program.Statements[0])
+		t.Fatalf("program.Statements[0] is not ast.ExpressionStatement. got=%T", program.Init.Statements[0])
 	}
 
 	literal, ok := stmt.Expression.(*ast.IntegerLiteral)
@@ -84,14 +84,14 @@ func TestFloatLiteralExpression(t *testing.T) {
 
 	_, program := parseProgram(t, input)
 
-	ok := assert.Equal(t, 1, len(program.Statements), "program should contain exactly 1 statement. got=%d", len(program.Statements))
+	ok := assert.Equal(t, 1, len(program.Init.Statements), "program should contain exactly 1 statement. got=%d", len(program.Init.Statements))
 	if !ok {
 		t.FailNow()
 	}
 
-	stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
+	stmt, ok := program.Init.Statements[0].(*ast.ExpressionStatement)
 	if !ok {
-		t.Fatalf("program.Statements[0] is not ast.ExpressionStatement. got=%T", program.Statements[0])
+		t.Fatalf("program.Statements[0] is not ast.ExpressionStatement. got=%T", program.Init.Statements[0])
 	}
 
 	literal, ok := stmt.Expression.(*ast.FloatLiteral)
@@ -115,13 +115,13 @@ func TestParsingPrefixExpressions(t *testing.T) {
 
 	for _, tt := range tests {
 		_, program := parseProgram(t, tt.input)
-		if len(program.Statements) != 1 {
-			t.Fatalf("program.Statements does not contain %d statements. got=%d", 1, len(program.Statements))
+		if len(program.Init.Statements) != 1 {
+			t.Fatalf("program.Statements does not contain %d statements. got=%d", 1, len(program.Init.Statements))
 		}
 
-		stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
+		stmt, ok := program.Init.Statements[0].(*ast.ExpressionStatement)
 		if !ok {
-			t.Fatalf("program.Statements[0] is not ast.ExpressionStatement. got=%T", program.Statements[0])
+			t.Fatalf("program.Statements[0] is not ast.ExpressionStatement. got=%T", program.Init.Statements[0])
 		}
 
 		exp, ok := stmt.Expression.(*ast.PrefixExpression)
@@ -155,13 +155,13 @@ func TestParsingInfixExpressions(t *testing.T) {
 	for _, tt := range tests {
 		_, program := parseProgram(t, tt.input)
 
-		if len(program.Statements) != 1 {
-			t.Fatalf("program.Statements does not contain %d statements. got=%d", 1, len(program.Statements))
+		if len(program.Init.Statements) != 1 {
+			t.Fatalf("program.Statements does not contain %d statements. got=%d", 1, len(program.Init.Statements))
 		}
 
-		stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
+		stmt, ok := program.Init.Statements[0].(*ast.ExpressionStatement)
 		if !ok {
-			t.Fatalf("program.Statements[0] is not ast.ExpressionStatement. got=%T", program.Statements[0])
+			t.Fatalf("program.Statements[0] is not ast.ExpressionStatement. got=%T", program.Init.Statements[0])
 		}
 
 		exp, ok := stmt.Expression.(*ast.InfixExpression)
@@ -245,13 +245,13 @@ func TestSubroutineCallParsing(t *testing.T) {
 
 	_, program := parseProgram(t, input)
 
-	if len(program.Statements) != 1 {
-		t.Fatalf("program.Statements does not contain %d statements. got=%d", 1, len(program.Statements))
+	if len(program.Init.Statements) != 1 {
+		t.Fatalf("program.Statements does not contain %d statements. got=%d", 1, len(program.Init.Statements))
 	}
 
-	stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
+	stmt, ok := program.Init.Statements[0].(*ast.ExpressionStatement)
 	if !ok {
-		t.Fatalf("stmt is not ast.ExpressionStatement. got=%T", program.Statements[0])
+		t.Fatalf("stmt is not ast.ExpressionStatement. got=%T", program.Init.Statements[0])
 	}
 
 	exp, ok := stmt.Expression.(*ast.SubroutineCall)
@@ -390,7 +390,7 @@ func checkParserErrors(t *testing.T, p *Parser) bool {
 	return false
 }
 
-func parseProgram(t *testing.T, input string) (*Parser, *ast.Section) {
+func parseProgram(t *testing.T, input string) (*Parser, *ast.Program) {
 	l := lexer.New(input)
 	p := New(l)
 

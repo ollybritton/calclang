@@ -1,7 +1,10 @@
 package evaluator
 
 import (
+	"fmt"
+	"strconv"
 	"strings"
+	"time"
 
 	"github.com/ollybritton/calclang/ast"
 	"github.com/ollybritton/calclang/builtins"
@@ -11,8 +14,26 @@ import (
 // Eval evaluates a node, and returns its representation as an object.Object.
 func Eval(node ast.Node, env *object.Environment) object.Object {
 	switch node := node.(type) {
+	case *ast.Program:
+		result := Eval(node.Init, env)
+
+		if len(node.Loop.Statements) == 0 {
+			return result
+		} else {
+			for {
+				for _, stmt := range node.Loop.Statements {
+					result = Eval(stmt, env)
+					if isError(result) {
+						return result
+					}
+				}
+
+				time.Sleep(20 * time.Millisecond)
+			}
+		}
+
 	case *ast.Section:
-		return evalProgram(node, env)
+		return evalSection(node, env)
 
 	// Statements
 	case *ast.ExpressionStatement:
@@ -38,6 +59,53 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		}
 
 		return val
+
+	case *ast.InputAssignment:
+		var i int64
+		var isInt bool
+		var f float64
+		var err error
+		var input string
+
+		for input == "" {
+			errStr := ""
+
+			if err != nil {
+				errStr = " (x)"
+			}
+
+			fmt.Printf("%s%s: ", node.Name.String(), errStr)
+			fmt.Scanln(&input)
+
+			i, err = strconv.ParseInt(input, 10, 64)
+			if err == nil {
+				isInt = true
+				break
+			}
+
+			f, err = strconv.ParseFloat(input, 64)
+			if err == nil {
+				break
+			}
+
+			input = ""
+			fmt.Print("\n")
+		}
+
+		var obj object.Object
+
+		if isInt {
+			obj = &object.Integer{Value: i}
+		} else {
+			obj = &object.Float{Value: f}
+		}
+
+		setErr := env.Set(node.Name.Value, obj)
+		if isError(setErr) {
+			return setErr
+		}
+
+		return obj
 
 	case *ast.SubroutineCall:
 		expression := Eval(node.Subroutine, env)
@@ -82,15 +150,12 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 
 	case *ast.Identifier:
 		return evalIdentifier(node, env)
-
-	case *ast.RepeatStatement:
-		return evalRepeatStatement(node, env)
 	}
 
 	return nil
 }
 
-func evalProgram(program *ast.Section, env *object.Environment) object.Object {
+func evalSection(program *ast.Section, env *object.Environment) object.Object {
 	var result object.Object
 
 	for _, statement := range program.Statements {
@@ -221,19 +286,6 @@ func evalIdentifier(node *ast.Identifier, env *object.Environment) object.Object
 	}
 
 	return newError("identifier not found: " + node.Value)
-}
-
-func evalRepeatStatement(node *ast.RepeatStatement, env *object.Environment) object.Object {
-	var result object.Object
-
-	for {
-		for _, stmt := range node.Statements {
-			result = Eval(stmt, env)
-			if isError(result) {
-				return result
-			}
-		}
-	}
 }
 
 func applySubroutine(sub object.Object, args []object.Object) object.Object {

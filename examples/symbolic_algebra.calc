@@ -1,14 +1,14 @@
 # Specification says no "symbolic algebra manipulation"
 
 # number of factors, 2-4
-3 -> F
+? -> F
 
 # factors (x - A)(x - B)...
-1 -> A
-2 -> B
-3 -> C
-0 -> D
-0 -> E
+? -> A
+? -> B
+? -> C
+? -> D
+? -> E
 
 # will print 0 if not calculating for the number of factors
 P( 2 * delta(2, F) )

@@ -66,9 +66,11 @@ func (p *Parser) addError(err error) {
 }
 
 // Parse parses the input program into a ast.Program.
-func (p *Parser) Parse() *ast.Section {
-	program := &ast.Section{}
+func (p *Parser) Parse() *ast.Program {
+	init := &ast.Section{}
+	loop := &ast.Section{}
 
+	// parse init section
 	for {
 		if p.curTokenIs(token.EOF) {
 			break
@@ -76,13 +78,36 @@ func (p *Parser) Parse() *ast.Section {
 
 		stmt := p.parseStatement()
 		if stmt != nil {
-			program.Statements = append(program.Statements, stmt)
+			init.Statements = append(init.Statements, stmt)
+		}
+
+		if p.curTokenIs(token.TRIPLE_COLON) {
+			break
 		}
 
 		p.nextToken()
 	}
 
-	return program
+	// parse loop section
+	if !p.curTokenIs(token.EOF) {
+		for {
+			if p.curTokenIs(token.EOF) {
+				break
+			}
+
+			stmt := p.parseStatement()
+			if stmt != nil {
+				loop.Statements = append(loop.Statements, stmt)
+			}
+
+			p.nextToken()
+		}
+	}
+
+	return &ast.Program{
+		Init: init,
+		Loop: loop,
+	}
 }
 
 func (p *Parser) nextToken() {
@@ -103,9 +128,36 @@ func (p *Parser) parseStatement() ast.Statement {
 		return nil
 	}
 
+	if p.curTokenIs(token.TRIPLE_COLON) {
+		return nil
+	}
+
 	switch p.curToken.Type {
-	case token.LBRACE: // Repeat
-		return p.parseRepeatStatement()
+	case token.QUESTION_MARK:
+		if !p.peekTokenIs(token.ASSIGN_TO) {
+			p.addError(NewInvalidTokenError(p.curToken, token.Token{
+				Type:     token.ASSIGN_TO,
+				Literal:  "->",
+				Line:     p.peekToken.Line,
+				StartCol: p.peekToken.StartCol,
+				EndCol:   p.peekToken.EndCol + 2,
+			}, p.peekToken))
+			return nil
+		}
+
+		p.nextToken()
+		p.nextToken()
+
+		var stmt ast.Statement
+
+		ident, _ := p.parseIdentifier().(*ast.Identifier)
+		stmt = &ast.InputAssignment{
+			Tok:  p.curToken,
+			Name: ident,
+		}
+
+		return stmt
+
 	default:
 		expr := p.parseExpression(LOWEST)
 		var stmt ast.Statement
@@ -263,28 +315,4 @@ func (p *Parser) parseGroupedExpression() ast.Expression {
 	}
 
 	return exp
-}
-
-func (p *Parser) parseRepeatStatement() ast.Statement {
-	repeat := &ast.RepeatStatement{Tok: p.curToken}
-
-	p.nextToken()
-	for !p.curTokenIs(token.EOF) {
-		if p.curTokenIs(token.NEWLINE) {
-			p.nextToken()
-		}
-
-		if p.curTokenIs(token.RBRACE) {
-			return repeat
-		}
-
-		stmt := p.parseStatement()
-		if stmt != nil {
-			repeat.Statements = append(repeat.Statements, stmt)
-		}
-
-		p.nextToken()
-	}
-
-	return repeat
 }

@@ -1,0 +1,43 @@
+17/91 -> fracA
+78/85 -> fracB
+19/51 -> fracC
+23/38 -> fracD
+29/33 -> fracE
+77/29 -> fracF
+95/23 -> fracG
+77/19 -> fracH
+ 1/17 -> fracI
+11/13 -> fracJ
+13/11 -> fracK
+15/2  -> fracL
+ 1/7  -> fracM
+55/1  -> fracN
+
+2 -> n
+
+1 -> iters
+1000 -> maxiters
+
+:::
+
+P(n)
+n -> start
+iters+1 -> iters
+
+n + (n * fracA - n) * delta(n * fracA, floor(n * fracA)) * delta(start, n) -> n
+n + (n * fracB - n) * delta(n * fracB, floor(n * fracB)) * delta(start, n) -> n
+n + (n * fracC - n) * delta(n * fracC, floor(n * fracC)) * delta(start, n) -> n
+n + (n * fracD - n) * delta(n * fracD, floor(n * fracD)) * delta(start, n) -> n
+n + (n * fracE - n) * delta(n * fracE, floor(n * fracE)) * delta(start, n) -> n
+n + (n * fracF - n) * delta(n * fracF, floor(n * fracF)) * delta(start, n) -> n
+n + (n * fracG - n) * delta(n * fracG, floor(n * fracG)) * delta(start, n) -> n
+n + (n * fracH - n) * delta(n * fracH, floor(n * fracH)) * delta(start, n) -> n
+n + (n * fracI - n) * delta(n * fracI, floor(n * fracI)) * delta(start, n) -> n
+n + (n * fracJ - n) * delta(n * fracJ, floor(n * fracJ)) * delta(start, n) -> n
+n + (n * fracK - n) * delta(n * fracK, floor(n * fracK)) * delta(start, n) -> n
+n + (n * fracL - n) * delta(n * fracL, floor(n * fracL)) * delta(start, n) -> n
+n + (n * fracM - n) * delta(n * fracM, floor(n * fracM)) * delta(start, n) -> n
+n + (n * fracN - n) * delta(n * fracN, floor(n * fracN)) * delta(start, n) -> n
+
+sqrt(-delta(n, start))
+sqrt(maxiters - iters)

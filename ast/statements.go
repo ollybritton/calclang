@@ -26,6 +26,23 @@ func (va *VariableAssignment) String() string {
 	return out.String()
 }
 
+// InputAssignment represents statements like "? -> A" in the AST.
+type InputAssignment struct {
+	Tok  token.Token
+	Name *Identifier
+}
+
+func (ia *InputAssignment) statementNode()     {}
+func (ia *InputAssignment) Token() token.Token { return ia.Tok }
+func (ia *InputAssignment) String() string {
+	var out bytes.Buffer
+
+	out.WriteString("? -> ")
+	out.WriteString(ia.Name.String())
+
+	return out.String()
+}
+
 // ExpressionStatement is a single expression by itself on one line.
 // Example: `{start} a+10 {end}` (where start & end are the start and end of the line)
 // General: `{start}{expression}{end}`
